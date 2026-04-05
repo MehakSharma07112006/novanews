@@ -7,7 +7,7 @@ function App() {
   const [category, setCategory] = useState("general");
 
   useEffect(() => {
-  fetch("https://gnews.io/api/v4/top-headlines?lang=en&country=us&max=10&token=YOUR_API_KEY")
+  fetch("https://gnews.io/api/v4/top-headlines?lang=en&country=us&max=10&token=1f6589b56163bbaf9d7af2bd7a0b99ff")
     .then(res => res.json())
     .then(data => {
       if (data.articles && data.articles.length > 0) {
@@ -162,7 +162,7 @@ onMouseLeave={e => {
               <img
                 src={
                   article.urlToImage ||
-                  "https://via.placeholder.com/400x200?text=No+Image"
+                  "https://images.unsplash.com/photo-1504711434969-e33886168f5c"
                 }
                 alt=""
                 style={{ width: "100%", height: "180px", objectFit: "cover" }}
