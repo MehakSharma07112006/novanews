@@ -1,31 +1,31 @@
 import { useEffect, useState } from "react";
 
- // <-- paste your NewsAPI key here
+const GNEWS_API_KEY = "YOUR_GNEWS_API_KEY"; // <-- paste your GNews key here
 
 function App() {
   const [news, setNews] = useState([]);
   const [search, setSearch] = useState("");
   const [dark, setDark] = useState(true);
-  const [category, setCategory] = useState("general");
+  const [category, setCategory] = useState("nation");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=20&apikey=YOUR_GNEWS_API_KEY`)
+    fetch(`https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=20&apikey=${GNEWS_API_KEY}`)
       .then((res) => res.json())
       .then((data) => {
-  if (data.articles && data.articles.length > 0) {
-    setNews(data.articles.map(a => ({
-      title: a.title,
-      description: a.description,
-      url: a.url,
-      urlToImage: a.image,
-      source: { name: a.source.name }
-    })));
-  } else {
-    setNews([]);
-  }
-})
+        if (data.articles && data.articles.length > 0) {
+          setNews(data.articles.map(a => ({
+            title: a.title,
+            description: a.description,
+            url: a.url,
+            urlToImage: a.image,
+            source: { name: a.source.name }
+          })));
+        } else {
+          setNews([]);
+        }
+      })
       .catch(() => {
         setNews([
           {
@@ -45,7 +45,7 @@ function App() {
         ]);
       })
       .finally(() => setLoading(false));
-  }, [category]); // re-fetches when category changes
+  }, [category]);
 
   const getSummary = (title) => {
     const summary = `This article discusses ${title}. It provides a quick overview of the topic.`;
@@ -122,7 +122,7 @@ function App() {
 
       {/* CATEGORY BUTTONS */}
       <div style={{ marginBottom: "20px" }}>
-        {["general", "technology", "business", "sports"].map((cat) => (
+        {["nation", "technology", "business", "sports"].map((cat) => (
           <button
             key={cat}
             onClick={() => setCategory(cat)}
