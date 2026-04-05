@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const NEWS_API_KEY = "YOUR_API_KEY_HERE"; // <-- paste your NewsAPI key here
+ // <-- paste your NewsAPI key here
 
 function App() {
   const [news, setNews] = useState([]);
@@ -11,9 +11,7 @@ function App() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(
-      `https://newsapi.org/v2/top-headlines?category=${category}&language=en&pageSize=20&apiKey=${NEWS_API_KEY}`
-    )
+    fetch(`http://localhost:5000/api/news?category=${category}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.articles && data.articles.length > 0) {
