@@ -1,8 +1,7 @@
-const axios = require("axios");
-
-module.exports = async (req, res) => {
-  const { category = "general" } = req.query;
-  const url = `https://newsapi.org/v2/top-headlines?category=${category}&language=en&pageSize=20&apiKey=${process.env.NEWS_API_KEY}`;
-  const response = await axios.get(url);
-  res.json(response.data);
-};
+export default async function handler(req, res) {
+  const { category = "nation" } = req.query;
+  const url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=20&apikey=${process.env.GNEWS_API_KEY}`;
+  const response = await fetch(url);
+  const data = await response.json();
+  res.json(data);
+}
