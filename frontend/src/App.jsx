@@ -7,10 +7,14 @@ function App() {
   const [category, setCategory] = useState("general");
 
   useEffect(() => {
-    fetch("https://api.allorigins.win/raw?url=https://newsapi.org/v2/top-headlines?country=us&apiKey=7f55ef3b14aa4fbc8c3359aeaab83792")  .then(res => res.json())
-      .then(data => setNews(data.articles))
-      .catch(err => console.log(err));
-  }, [category]);
+  fetch("https://gnews.io/api/v4/top-headlines?lang=en&country=us&max=10&token=1f6589b56163bbaf9d7af2bd7a0b99ff")
+    .then(res => res.json())
+    .then(data => {
+      console.log(data);
+      setNews(data.articles || []);
+    })
+    .catch(err => console.log(err));
+}, [category]);
 
   const getSummary = (title) => {
   const summary = `This article discusses ${title}. It provides a quick overview of the topic.`;
