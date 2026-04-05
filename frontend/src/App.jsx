@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const GNEWS_API_KEY = "YOUR_GNEWS_API_KEY"; // <-- paste your GNews key here
+const GNEWS_API_KEY = "1f6589b56163bbaf9d7af2bd7a0b99ff"; // <-- paste your GNews key here
 
 function App() {
   const [news, setNews] = useState([]);
