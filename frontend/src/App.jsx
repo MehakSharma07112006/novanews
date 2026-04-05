@@ -7,20 +7,16 @@ function App() {
   const [category, setCategory] = useState("general");
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:5000/news`)
+    fetch("https://newsapi.org/v2/top-headlines?country=us&apiKey=7f55ef3b14aa4fbc8c3359aeaab83792")
       .then(res => res.json())
-      .then(data => setNews(data))
+      .then(data => setNews(data.articles))
       .catch(err => console.log(err));
   }, [category]);
 
-  const getSummary = async (title) => {
-    const res = await fetch("http://127.0.0.1:5000/summarize", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: title }),
-    });
+  const getSummary = (title) => {
+  const summary = `This article discusses ${title}. It provides a quick overview of the topic.`;
+  alert(summary);
+};
 
     const data = await res.json();
     alert(data.summary);
