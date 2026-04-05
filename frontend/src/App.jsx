@@ -6,6 +6,8 @@ function App() {
   const [dark, setDark] = useState(true);
   const [category, setCategory] = useState("nation");
   const [loading, setLoading] = useState(true);
+  const [summaries, setSummaries] = useState({});
+  const [loadingSummary, setLoadingSummary] = useState({});
 
   useEffect(() => {
     setLoading(true);
@@ -45,9 +47,20 @@ function App() {
       .finally(() => setLoading(false));
   }, [category]);
 
-  const getSummary = (title) => {
-    const summary = `This article discusses ${title}. It provides a quick overview of the topic.`;
-    alert(summary);
+  const getSummary = async (index, title, description) => {
+    if (summaries[index]) return;
+    setLoadingSummary(prev => ({ ...prev, [index]: true }));
+    try {
+      const res = await fetch(
+        `/api/summary?title=${encodeURIComponent(title)}&description=${encodeURIComponent(description || "")}`
+      );
+      const data = await res.json();
+      setSummaries(prev => ({ ...prev, [index]: data.summary }));
+    } catch {
+      setSummaries(prev => ({ ...prev, [index]: "Could not load summary. Try again." }));
+    } finally {
+      setLoadingSummary(prev => ({ ...prev, [index]: false }));
+    }
   };
 
   const theme = {
@@ -55,10 +68,13 @@ function App() {
     text: dark ? "#e2e8f0" : "#0f172a",
     card: dark ? "#1e293b" : "#ffffff",
     accent: "#38bdf8",
+    summaryBg: dark ? "#0f2337" : "#e0f2fe",
   };
 
   return (
     <div style={{ minHeight: "100vh", background: theme.bg, color: theme.text, fontFamily: "Arial", padding: "20px" }}>
+
+      {/* HEADER */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h1 style={{ fontSize: "40px", fontWeight: "bold", lineHeight: "1.2", paddingBottom: "5px", background: "linear-gradient(90deg, #38bdf8, #6366f1)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
           🚀 NovaNews
@@ -68,10 +84,12 @@ function App() {
         </button>
       </div>
 
+      {/* SEARCH */}
       <input type="text" placeholder="Search news..." value={search} onChange={(e) => setSearch(e.target.value)}
         style={{ padding: "12px", width: "100%", borderRadius: "8px", border: "none", marginBottom: "15px", boxSizing: "border-box" }}
       />
 
+      {/* CATEGORY BUTTONS */}
       <div style={{ marginBottom: "20px" }}>
         {["nation", "technology", "business", "sports"].map((cat) => (
           <button key={cat} onClick={() => setCategory(cat)}
@@ -83,29 +101,47 @@ function App() {
 
       {loading && <p style={{ textAlign: "center", opacity: 0.6 }}>Loading news...</p>}
 
+      {/* GRID */}
       {!loading && (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
-          {news.filter((article) => article.title?.toLowerCase().includes(search.toLowerCase()))
+          {news
+            .filter((article) => article.title?.toLowerCase().includes(search.toLowerCase()))
             .map((article, i) => (
               <div key={i}
                 style={{ background: theme.card, borderRadius: "12px", overflow: "hidden", boxShadow: "0 8px 20px rgba(0,0,0,0.2)", transition: "all 0.3s ease", cursor: "pointer" }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-5px) scale(1.02)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0) scale(1)"; }}>
+
                 <img
                   src={article.urlToImage || "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400"}
                   alt="" style={{ width: "100%", height: "180px", objectFit: "cover" }}
                   onError={(e) => { e.target.src = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400"; }}
                 />
+
                 <div style={{ padding: "15px" }}>
                   <h3 style={{ margin: "0 0 6px", fontSize: "15px" }}>{article.title}</h3>
                   <p style={{ fontSize: "12px", opacity: 0.7, margin: "0 0 8px" }}>{article.source?.name}</p>
                   <p style={{ fontSize: "13px", margin: "0 0 10px" }}>{article.description}</p>
-                  <a href={article.url} target="_blank" rel="noreferrer" style={{ color: theme.accent }}>Read more →</a>
+
+                  <a href={article.url} target="_blank" rel="noreferrer" style={{ color: theme.accent }}>
+                    Read more →
+                  </a>
+
                   <br />
-                  <button onClick={() => getSummary(article.title)}
+
+                  <button
+                    onClick={() => getSummary(i, article.title, article.description)}
                     style={{ marginTop: "10px", padding: "8px 12px", backgroundColor: theme.accent, border: "none", borderRadius: "6px", cursor: "pointer", color: "white" }}>
-                    🤖 AI Summary
+                    {loadingSummary[i] ? "Summarizing..." : "🤖 AI Summary"}
                   </button>
+
+                  {/* INLINE SUMMARY */}
+                  {summaries[i] && (
+                    <div style={{ marginTop: "10px", padding: "10px", background: theme.summaryBg, borderRadius: "8px", fontSize: "13px", lineHeight: "1.5", borderLeft: "3px solid #38bdf8" }}>
+                      <strong style={{ color: theme.accent }}>🤖 AI Summary:</strong>
+                      <p style={{ margin: "6px 0 0" }}>{summaries[i]}</p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
