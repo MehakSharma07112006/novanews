@@ -1,16 +1,8 @@
-const express = require("express");
-const cors = require("cors");
 const axios = require("axios");
-require("dotenv").config();
 
-const app = express();
-app.use(cors());
-
-app.get("/api/news", async (req, res) => {
+module.exports = async (req, res) => {
   const { category = "general" } = req.query;
   const url = `https://newsapi.org/v2/top-headlines?category=${category}&language=en&pageSize=20&apiKey=${process.env.NEWS_API_KEY}`;
   const response = await axios.get(url);
   res.json(response.data);
-});
-
-app.listen(5000, () => console.log("Server running on port 5000"));
+};
