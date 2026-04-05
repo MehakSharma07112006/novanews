@@ -11,31 +11,21 @@ function App() {
 
   useEffect(() => {
     setLoading(true);
-    fetch(`http://localhost:5000/api/news?category=${category}`)
+    fetch(`https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=20&apikey=YOUR_GNEWS_API_KEY`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.articles && data.articles.length > 0) {
-          setNews(data.articles);
-        } else {
-          // Fallback data if API fails or key is missing
-          setNews([
-            {
-              title: "SpaceX launches new rocket",
-              description: "A major milestone in aerospace engineering.",
-              url: "https://example.com",
-              urlToImage: "https://images.unsplash.com/photo-1517976487492-5750f3195933?w=400",
-              source: { name: "Demo News" },
-            },
-            {
-              title: "AI transforming industries",
-              description: "Artificial intelligence is reshaping the future of work.",
-              url: "https://example.com",
-              urlToImage: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=400",
-              source: { name: "Tech Daily" },
-            },
-          ]);
-        }
-      })
+  if (data.articles && data.articles.length > 0) {
+    setNews(data.articles.map(a => ({
+      title: a.title,
+      description: a.description,
+      url: a.url,
+      urlToImage: a.image,
+      source: { name: a.source.name }
+    })));
+  } else {
+    setNews([]);
+  }
+})
       .catch(() => {
         setNews([
           {
