@@ -1,14 +1,8 @@
-const https = require("https");
-
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   const { category = "nation" } = req.query;
   const url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=en&max=20&apikey=${process.env.GNEWS_API_KEY}`;
   
-  https.get(url, (response) => {
-    let data = "";
-    response.on("data", (chunk) => { data += chunk; });
-    response.on("end", () => { res.json(JSON.parse(data)); });
-  }).on("error", (err) => {
-    res.status(500).json({ error: err.message });
-  });
-};
+  const response = await fetch(url);
+  const data = await response.json();
+  res.json(data);
+}
