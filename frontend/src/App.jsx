@@ -7,8 +7,7 @@ function App() {
   const [category, setCategory] = useState("general");
 
   useEffect(() => {
-    fetch("https://newsapi.org/v2/top-headlines?country=us&apiKey=7f55ef3b14aa4fbc8c3359aeaab83792")
-      .then(res => res.json())
+    fetch("https://api.allorigins.win/raw?url=https://newsapi.org/v2/top-headlines?country=us&apiKey=7f55ef3b14aa4fbc8c3359aeaab83792")  .then(res => res.json())
       .then(data => setNews(data.articles))
       .catch(err => console.log(err));
   }, [category]);
@@ -18,9 +17,7 @@ function App() {
   alert(summary);
 };
 
-    const data = await res.json();
-    alert(data.summary);
-  };
+    
 
   const theme = {
     bg: dark ? "#0f172a" : "#f1f5f9",
